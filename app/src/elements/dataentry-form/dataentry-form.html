@@ -1,0 +1,98 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html" />
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html" />
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html" />
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html" />
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html"/>
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html" />
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html" />
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html" />
+
+<dom-module id="dataentry-form">
+  <template>
+    <style include="iron-flex">
+      :host {
+        display: block;
+      }
+      .circle {
+        display: inline-block;
+        height: 70px;
+        width: 120px;
+        border-radius: 35%;
+        background: #ddd;
+        line-height: 64px;
+        font-size: 20px;
+        color: #555;
+        text-align: center;
+      }
+      .col2{
+        width: 40px;
+        padding-left: 50px;
+        padding-right: 50px;
+      }
+      .col1{
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+    </style>
+    <div class="circle">
+        2016-100
+    </div>
+
+    <div class="col1">
+      <paper-input class="flex" label="Job Name" value="{{jobName}}"></paper-input>
+      <paper-checkbox class="col2"value="{{depositRecvd}}">Deposit</paper-checkbox>
+    </div>
+    <div class="col1">
+      <paper-input class="flex" label="Customer Name" value="{{customerName}}"></paper-input>
+      <paper-checkbox class="col2" value="{{invSent}}">Inv Sent</paper-checkbox>
+    </div>
+    <div class="col1">
+        <paper-dropdown-menu label="Job Status" class="flex">
+          <paper-listbox class="dropdown-content">
+            <paper-item>Pending</paper-item>
+            <paper-item>Design</paper-item>
+            <paper-item>Production</paper-item>
+            <paper-item>Install</paper-item>
+            <paper-item>Complete</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      <paper-checkbox class="col2" value="{{invPaid}}">Inv Paid</paper-checkbox>
+    </div>
+    <div class="layout horizontal">
+        <paper-icon-button icon="add"></paper-icon-button>
+    </div>
+    <!--
+    This is where the message list element will go
+  -->
+
+
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'dataentry-form',
+
+      properties: {
+        job: {
+          type: String,
+          value: 'dataentry-form',
+          notify: true
+        }
+      }
+    });
+  })();
+  </script>
+</dom-module>
