@@ -13,7 +13,8 @@ This is the main data entery form view.  it is used for both enetering new jobs 
 <link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html" />
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html" />
-
+<link rel="import" href="../jdc-data-jobs/jdc-data-jobs.html"/>
+<link rel="import" href="../jdc-data-jobnumber/jdc-data-jobnumber.html" />
 <dom-module id="dataentry-form">
   <template>
     <style include="iron-flex">
@@ -21,63 +22,82 @@ This is the main data entery form view.  it is used for both enetering new jobs 
         display: block;
       }
       paper-fab{
-        position: absolute;
-        top: 120px;
-        right:65px;
+        margin: 30px;
       }
+      .row{
+        margin: 10px 0;
+      }
+
       .jobNumber {
         display: inline-block;
-        height: 40px;
+        height: 44px;
         margin: 40px 0;
-        padding: 0 120px 0 10px;
+        margin-right: 40px;
+        background-color: green;
+        padding-left: 15px;
         border-radius: 3px;
-        background: #ddd;
-        line-height: 40px;
-        font-size: 20px;
-        color: #555;
-        text-align: center;
+        line-height: 44px;
+        font-size: 25px;
+        color: white;
+        text-align: left;
       }
-      .col2{
-        width: 40px;
-        padding-left: 50px;
-        padding-right: 50px;
-      }
-      .col1{
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-      }
-    </style>
-    <div class="jobNumber">
-        {{job_number}}
-    </div>
 
-    <div class="col1">
-      <paper-input class="flex" label="Job Name" value="{{jobName}}"></paper-input>
-      <paper-checkbox class="col2"value="{{depositRecvd}}">Deposit</paper-checkbox>
+    </style>
+    <jdc-data-jobs  id="jobs" jobs="{{jobs}}"></jdc-data-jobs>
+    <jdc-data-jobnumber id="jnumber" next-job-number="{{job.jobNumber}}"></jdc-data-jobnumber>
+    <div class="layout horizontal align center">
+      <span class="jobNumber flex">{{job.jobNumber}}</span>
+      <paper-fab icon="add" on-tap="_addJob"></paper-fab>
     </div>
-    <div class="col1">
-      <paper-input class="flex" label="Customer Name" value="{{customerName}}"></paper-input>
-      <paper-checkbox class="col2" value="{{invSent}}">Inv Sent</paper-checkbox>
+    <div class="layout horizontal row">
+      <paper-input label="Job Name" value="{{job.jobName}}" class="flex"></paper-input>
     </div>
-    <div class="col1">
-        <paper-dropdown-menu label="Job Status" class="flex">
+    <div class="layout horizontal row">
+      <paper-input label="POC Name" value="{{job.poc.name}}"></paper-input>
+      <paper-input label="Phone/Fax # or Email" value="{{job.poc.contactNumber}}" class="flex"></paper-input>
+    </div>
+    <div class="layout vertical row">
+      <paper-input label="Client Name" value="{{job.client}}" class="flex"></paper-input>
+    </div>
+      <div class="layout horizontal">
+        <iron-autogrow-textarea value="{{job.description}}" class="flex" placeholder="Job Description" rows="2"></iron-autogrow-textarea>
+      </div>
+    </div>
+    <div class="layout horizontal row">
+      <paper-dropdown-menu label="Type" class="flex" value="{{job.jobType}}">
+        <paper-listbox class="dropdown-content">
+          <paper-item>Reorder</paper-item>
+          <paper-item>New</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+        <paper-dropdown-menu label="Job Status" class="flex" value="{{job.jobStatus.status}}">
           <paper-listbox class="dropdown-content">
             <paper-item>Pending</paper-item>
             <paper-item>Design</paper-item>
             <paper-item>Production</paper-item>
             <paper-item>Install</paper-item>
             <paper-item>Complete</paper-item>
+            <<paper-item>Hold</paper-item>
           </paper-listbox>
         </paper-dropdown-menu>
-      <paper-checkbox class="col2" value="{{invPaid}}">Inv Paid</paper-checkbox>
     </div>
-    <div class="layout horizontal">
-        <iron-autogrow-textarea class="flex" placeholder="Note" rows="4"></iron-autogrow-textarea>
+    <div class="layout horizontal row">
+      <span class="layout vertical flex">
+        <paper-checkbox value="{{job.depositInv}}">Deposit Inv</paper-checkbox>
+        <paper-checkbox value="{{job.depositPaid}}">Deposit Paid</paper-checkbox>
+      </span>
+      <span class="layout vertical flex">
+        <paper-checkbox value="{{job.balanceInv}}">Balance Inv</paper-checkbox>
+        <paper-checkbox value="{{job.balancePaid}}">Balanace Paid</paper-checkbox>
+      </span>
+      <span class="layout vertical flex">
+        <paper-checkbox value="{{job.complete}}">Complete</paper-checkbox>
+        <paper-checkbox value="{{job.efile}}">E-File</paper-checkbox>
+      </span>
     </div>
-    <paper-fab icon="add"></paper-fab>
-
-
-
+    <div class="layout horizontal row">
+      <iron-autogrow-textarea value="{{job.note}}" class="flex" placeholder="Notes" rows="5"></iron-autogrow-textarea>
+    </div>
   </template>
   <script>
   (function() {
@@ -85,17 +105,41 @@ This is the main data entery form view.  it is used for both enetering new jobs 
 
     Polymer({
       is: 'dataentry-form',
-
       properties: {
-        job: {
-          type: String,
-          value: 'dataentry-form',
-          notify: true
+        job:{
+          type:Object,
+          value: function(){
+            return {
+              notes:[],
+              jobStatus:{}
+            }
+          }
         },
-        job_number: {
-          type:Number,
-          value:'2016-100'
+        jobs:{
+          type:Array
         }
+      },
+      listeners:{
+        'job-saved': "_handleJobSaved"
+      },
+      _handleJobSaved:function(e, result){
+        console.log("eveent heard: ", result);
+        if(result){
+          //reset the form
+          this.resetForm();
+        }else{
+          //report error
+        }
+      },
+      _addJob: function(){
+        this.$.jobs.addJob(this.job);
+        this.$.jnumber.incrementNumber();
+      },
+      testChanged: function(nV, oV){
+        console.log('test changed' + nV);
+      },
+      resetForm: function(){
+        console.warn("Reseting form");
       }
     });
   })();

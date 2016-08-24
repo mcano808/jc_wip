@@ -1,9 +1,8 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/my-app.html",
+  "shell": "src/jdc-wip-app.html",
   "fragments": [
-    "src/my-view1.html",
-    "src/my-view2.html",
-    "src/my-view3.html"
+    "src/jdc-dataentry-view.html",
+    "src/jdc-wip-view.html"
   ]
 }

@@ -1,0 +1,63 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymerfire/polymerfire.html"/>
+
+<dom-module id="jdc-data-jobs">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+    <firebase-app
+      name="jc-wip"
+      api-key="AIzaSyBVKdosWNVG_F-Qk8Yfj3ma_2Uf6bV-v9U"
+      auth-domain="jc-wip-cc380.firebaseapp.com"
+      database-url="https://jc-wip-cc380.firebaseio.com"
+    >
+    </firebase-app>
+    <firebase-document
+      id="jobsDocument"
+      app-name="jc-wip"
+      path="/jobs"
+      data="{{jobs}}">
+    </firebase-document>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'jdc-data-jobs',
+
+      properties: {
+        jobs: {
+          notify: true,
+          type:Object
+        }
+      },
+      addJob: function(job){
+        console.log("adding a new job: ", job);
+        var path = '/jobs/' + job.jobNumber,
+            that = this;
+        this.$.jobsDocument.setStoredValue(path, job).then(function(resp){
+          console.log('saved');
+          that.fire('job-saved', true);
+        }, function(err){
+          console.log('save error');
+          that.fire('job-saved',false);
+        })
+      }
+    });
+  })();
+  </script>
+</dom-module>
